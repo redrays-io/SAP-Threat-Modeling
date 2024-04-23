@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Threat Map{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row" style="width: 100vh">
+            <div class="col-md-12">
+                <div id="mynetwork"></div>
+            </div>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="checkbox" onchange="updateConnections()">
+            <label class="form-check-label" for="checkbox">
+                Show connections with stored password only
+            </label>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var nodes = [];
+        var edges = [];
+        var checkbox = document.getElementById('checkbox');
+
+        function updateConnections() {
+            // Clear existing nodes and edges
+            nodes = [];
+            edges = [];
+
+            // Fetch connection data from the server
+            fetch('/get_connections?password_only=' + checkbox.checked)
+                .then(response => response.json())
+                .then(data => {
+                    // Process the connection data
+                    data.forEach(connection => {
+                        // Add unique IP addresses from connection_from and connection_to as nodes
+                        addNode(connection.connection_from);
+                        addNode(connection.connection_to);
+
+                        // Add the connection as an edge with adjusted length
+                        edges.push({
+                            from: connection.connection_from,
+                            to: connection.connection_to,
+                            label: connection.connection_name,
+                            arrows: 'to',
+                            length: 500 // Adjusted length to accommodate longer labels
+                        });
+                    });
+
+                    // Create a network
+                    var container = document.getElementById('mynetwork');
+                    var data = {
+                        nodes: nodes,
+                        edges: edges,
+                    };
+                    var options = {
+                        height: '800px',
+                        width: '1000px',
+                        edges: {
+                            font: {
+                                align: 'middle'
+                            }
+                        }
+                    };
+                    var network = new vis.Network(container, data, options);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Function to add a node if it doesn't already exist
+        function addNode(nodeId) {
+            if (!nodes.some(node => node.id === nodeId)) {
+                nodes.push({id: nodeId, label: nodeId});
+            }
+        }
+
+        // Initial call to update connections based on checkbox state
+        updateConnections();
+    </script>
+{% endblock %}

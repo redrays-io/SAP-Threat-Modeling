@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    <h1>Welcome to the SAP Threat Modeling Tool</h1>
+
+    <p>This application helps you analyze and visualize the connections between your SAP systems, enabling you to identify potential security risks and vulnerabilities.</p>
+
+    <h2>How it Works:</h2>
+
+    <ol>
+        <li>
+            **Initial Connections:**<br>
+            Start by inputting the credentials of your SAP systems on the "Init Connections" page. This includes the System ID (SID), username, password, client number, host address, and port number. You can add multiple systems and easily remove them if needed.
+        </li>
+        <li>
+            **Scanning for Inter-SAP Connections:**<br>
+            Once you've added your initial connections, click the "Scan" button. The tool will then analyze your SAP systems and discover the connections between them. This information, including connection names, types, source and destination systems, usernames, and password storage flags, is displayed on the "Inter-SAP Connections" page.
+        </li>
+        <li>
+            **Visualizing the Network:**<br>
+            The "Graph Connection" page provides a visual representation of your SAP network. Each system is represented as a node, and the connections between them are shown as lines. You can filter the graph to only show connections with stored passwords, highlighting potential security concerns.
+        </li>
+    </ol>
+
+    <h2>Benefits:</h2>
+
+    <ul>
+        <li>Identify systems with saved passwords, which pose a significant security risk.</li>
+        <li>Understand the flow of data between systems to assess potential breach impact.</li>
+        <li>Evaluate the overall security posture of your SAP environment.</li>
+    </ul>
+
+    <p>Start exploring your SAP network today and take control of your system's security!</p>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block title %}SAP Connections{% endblock %}
+
+{% block content %}
+    <h2>SAP Connection Credentials</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>SID</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Client</th>
+            <th>HTTPS</th>
+            <th>Host</th>
+            <th>Port</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="credentialsTableBody">
+        {% for connection in connections %}
+            <tr data-sid="{{ connection[0] }}">
+                <td>{{ connection[0] }}</td>
+                <td>{{ connection[1] }}</td>
+                <td>**********</td>
+                <td>{{ connection[3] }}</td>
+                <td>{{ "HTTPS" if connection[4] else "HTTP" }}</td>
+                <td>{{ connection[5] }}</td>
+                <td>{{ connection[6] }}</td>
+                <td>
+                    <button class="btn btn-danger"
+                            onclick="removeConnection('{{ connection[0] }}', '{{ connection[5] }}', '{{ connection[6] }}')">
+                        Remove
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button id="addRowBtn" class="btn btn-primary">Add Row</button>
+    <button id="saveButton" class="btn btn-success" disabled>Save</button>
+    <button id="scanButton" class="btn btn-info {% if connections %} {% else %}disabled{% endif %}"
+            {% if not connections %}disabled{% endif %}>Scan
+    </button>
+
+    <!-- Notification element -->
+    <div id="notification" class="alert alert-success" role="alert" style="display: none;">
+        Data saved successfully!
+    </div>
+
+    <script>
+        const tableBody = document.getElementById('credentialsTableBody');
+        const addRowBtn = document.getElementById('addRowBtn');
+        const saveButton = document.getElementById('saveButton');
+        const scanButton = document.getElementById('scanButton');
+        const notification = document.getElementById('notification');
+
+        function addRow() {
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                 <td><input id="sidInput" type="text" class="form-control"></td>
+            <td><input id="usernameInput" type="text" class="form-control"></td>
+            <td><input id="passwordInput" type="password" class="form-control"></td>
+            <td><input id="clientInput" type="text" class="form-control"></td>
+            <td>
+                <select id="protocolSelect" class="form-control" style="width: 100px;">
+                    <option value="http">HTTP</option>
+                    <option value="https">HTTPS</option>
+                </select>
+            </td>
+            <td><input id="hostInput" type="text" class="form-control"></td>
+            <td><input id="portInput" type="number" class="form-control"></td>
+            <td><button class="btn btn-danger" onclick="deleteRow(this)">Remove</button></td>
+            `;
+            // Enable save button when a row is added
+            saveButton.disabled = false;
+        }
+
+        function deleteRow(btn) {
+            const row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            // Disable save button if no rows are left after deletion
+            if (tableBody.querySelectorAll('tr').length === 0) {
+                saveButton.disabled = true;
+            }
+        }
+
+        function removeConnection(sid, host, port) {
+            fetch('/remove_connection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'sid': sid, 'host': host, 'port': port})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Server response:', data);
+                    // Remove the corresponding row from the table
+                    const row = document.querySelector(`tr[data-sid="${sid}"]`);
+                    if (row) {
+                        row.remove();
+                    }
+                    // Check if connections exist and enable/disable scan button accordingly
+                    scanButton.disabled = document.querySelectorAll('#credentialsTableBody tr').length === 0;
+                    scanButton.classList.toggle('disabled', scanButton.disabled);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function collectData() {
+            const rows = tableBody.querySelectorAll('td input, td select');
+            const data = [];
+            rows.forEach((input, index) => {
+                const rowIndex = Math.floor(index / 7); // Assuming there are 7 inputs per row
+                const inputIndex = index % 7;
+                if (!data[rowIndex]) {
+                    data[rowIndex] = {};
+                }
+                switch (inputIndex) {
+                    case 0:
+                        data[rowIndex].sid = input.value;
+                        break;
+                    case 1:
+                        data[rowIndex].username = input.value;
+                        break;
+                    case 2:
+                        data[rowIndex].password = input.value;
+                        break;
+                    case 3:
+                        data[rowIndex].client = input.value;
+                        break;
+                    case 4:
+                        data[rowIndex].use_https = input.value === "https";
+                        break;
+                    case 5:
+                        data[rowIndex].host = input.value;
+                        break;
+                    case 6:
+                        data[rowIndex].port = input.value;
+                        break;
+                    default:
+                        break;
+                }
+            });
+            return data;
+        }
+
+
+        saveButton.addEventListener('click', () => {
+            const data = collectData();
+            fetch('/save_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Server response:', data);
+                    // Show notification
+                    notification.style.display = 'block';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 3000); // Hide after 3 seconds
+
+                    // Enable scan button after saving data
+                    scanButton.disabled = false;
+
+                    window.location.reload();
+
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        scanButton.addEventListener('click', () => {
+            fetch('/scan', {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Scan result:', data);
+                    // Handle scan result here, if needed
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        addRowBtn.addEventListener('click', addRow);
+    </script>
+{% endblock %}

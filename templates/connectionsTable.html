@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}SAP Connections{% endblock %}
+
+{% block content %}
+    <h2>SAP Connections Table</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Connection Name</th>
+                <th scope="col">Connection Type</th>
+                <th scope="col">Connection From</th>
+                <th scope="col">Connection To</th>
+                <th scope="col">Username</th>
+                <th scope="col">Stored Password Flag</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for connection in connections %}
+            <tr>
+                <td>{{ connection[0] }}</td>
+                <td>{{ connection[1] }}</td>
+                <td>{{ connection[2] }}</td>
+                <td>{{ connection[3] }}</td>
+                <td>{{ connection[4] }}</td>
+                <td>{{ connection[5] }}</td>
+                <td>{{ connection[6] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
