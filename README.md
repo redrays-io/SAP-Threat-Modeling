@@ -2,6 +2,7 @@
 
 This tool helps you analyze and visualize connections between your SAP systems, enabling identification of potential security risks and vulnerabilities.
 
+For more detailed information about potential threats in SAP systems related to inter-SAP connections, visit [this page](https://redrays.io/blog/securing-sap-server-connections-threat-modeling/).
 ## Features:
 
 - **Input SAP Credentials:** Enter system details (SID, username, password, etc.) to establish initial connections.
