@@ -14,16 +14,16 @@ For more detailed information about potential threats in SAP systems related to 
 
 1. **Initiate Connections:**
     - Navigate to the "Init Connections" page.
-    - Enter SAP system credentials similar to the format shown in this ![screenshot](https://redrays.io/wp-content/uploads/2024/04/Screenshot-2024-04-23-121400.png).
+    - Enter SAP system credentials similar to the format shown in this ![screenshot](images/1.png).
     - Save the connection details and click "Scan" to start the analysis.
 
 2. **View Existing Connections:**
     - After the scan is completed, go to the "Connections Table" page.
-    - Here, you can view all existing connections in a tabular format as depicted in this ![screenshot](https://redrays.io/wp-content/uploads/2024/04/Screenshot-2024-04-23-121419.png).
+    - Here, you can view all existing connections in a tabular format as depicted in this ![screenshot](images/2.png).
 
 3. **Explore Inter-SAP Connections:**
-    - Alternatively, visit the "Graph Connection" page to visualize the inter-SAP connections in a graph format like shown in this ![screenshot](https://redrays.io/wp-content/uploads/2024/04/Screenshot-2024-04-23-121456.png).
-    - You can filter the connections to display only those with saved passwords, as demonstrated in this ![screenshot](https://redrays.io/wp-content/uploads/2024/04/Screenshot-2024-04-23-121526.png).
+    - Alternatively, visit the "Graph Connection" page to visualize the inter-SAP connections in a graph format like shown in this ![screenshot](images/3.png).
+    - You can filter the connections to display only those with saved passwords, as demonstrated in this ![screenshot](images/4.png).
 
 
 ## Installation:
