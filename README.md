@@ -1,3 +1,7 @@
+<div style="text-align:center">
+    <img src="images/RedRays_Logo.png" alt="screenshot" width="200" height="200">
+</div>
+
 # SAP Threat Modeling Tool - Readme
 
 This tool helps you analyze and visualize connections between your SAP systems, enabling identification of potential security risks and vulnerabilities.
