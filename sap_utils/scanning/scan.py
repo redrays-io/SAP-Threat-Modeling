@@ -1,50 +1,52 @@
+import base64
 import re
+import xml.etree.ElementTree as ET
 
 import requests
-import base64
-import xml.etree.ElementTree as ET
 
 from sap_utils.connections.sap_connections import SAPConnection
 
 """
-Connection string keys
-H=hostname/IP address
-S=system number
-M=client number
-U=RFC user
-L=language
-X=load balancing (LB=ON)
-I=system ID
-N=logon group
-Z=auth related
-g=gateway server
-F= Enforce codepage
-f=Y. "RFC Ticket für Java
-J='. "SSL Client Application
-j=Y' RFC Unicode-Support
-m= MDMP Setting
-s=Y rfcsnc: SNC activated
-t='. "SSL Client Application
-r='. "Proxy-Password
-R='. "Proxy-User
-v=' Password
-z='. KEEPALIVE Timeout
-y='. CPIC Timeout
-h=' REACT of TRACE
-Y='. Trace Propagation
-e=' *GW Starttype
-q=   qRFCVERS start
-w='  RFCCATEGORY start
-F='. "RFCHTTP-Structure
-N='. "Path-Prefix
-d='. "Unicode-Flag
-k=Y'. "rfcwan: slow connection
-x='.  "Authority
-b=Y'. "RFCLOGON -> Anmeldebild
-i=Y'. "SAVESERVER als IP
-u=Y'. "RFC same user prepared
-O=X'. "ARFC-Option prepared
-l=X'. "Display unchangeable
+--------------------------------------------------------------------------------
+| Key         | Meaning / Explanation                                                         |  
+|-------------|------------------------------------------------------------------------------|  
+| H=          | Hostname or IP address                                                       |  
+| S=          | System number                                                                |  
+| M=          | Client number                                                                |  
+| U=          | RFC user                                                                     |  
+| L=          | Language                                                                     |  
+| X=          | Load balancing (LB=ON)                                                       |  
+| I=          | System ID                                                                    |  
+| N=          | Logon group                                                                  |  
+| Z=          | Various authentication-related parameters                                    |  
+| g=          | Gateway server                                                               |  
+| F=          | Enforce codepage                                                             |  
+| f=Y         | RFC Ticket for Java                                                          |  
+| J=...       | SSL Client Application                                                       |  
+| j=Y         | RFC Unicode-Support                                                          |  
+| m=Y         | MDMP Settings (Multi-Display/Multi-Processing)                               |  
+| rfcsnc:     | SNC activated (secure connection)                                            |  
+| t=...       | SSL Client Application                                                       |  
+| r=...       | Proxy password                                                               |  
+| R=...       | Proxy user                                                                   |  
+| v=...       | Saved password                                                               |  
+| z=...       | KEEPALIVE timeout                                                            |  
+| y=...       | CPIC timeout                                                                 |  
+| h=...       | REACT or Trace option                                                        |  
+| e=...       | GW Starttype (internal gateway param)                                        |  
+| q=          | qRFCVERS start (queued RFC version)                                          |  
+| w=...       | RFCCATEGORY start (custom category)                                          |  
+| F=.         | RFCHTTP-Structure (overload of the key “F” in some configurations)           |  
+| N=.         | Path-Prefix for RFC requests                                                 |  
+| d=.         | Unicode-Flag                                                                 |  
+| k=Y         | rfcwan: slow connection                                                      |  
+| x=.         | Authority checks                                                             |  
+| b=Y         | RFCLOGON -> Login screen                                                     |  
+| i=Y         | SAVESERVER as IP                                                             |  
+| u=Y         | RFC same user prepared                                                       |  
+| O=X         | ARFC-Option prepared                                                         |  
+| l=X         | Display unchangeable (locked)                                                |
+--------------------------------------------------------------------------------
 """
 
 xml_request_body_rfc_read_table = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:sap-com:document:sap:rfc:functions">
@@ -121,7 +123,6 @@ def parse_xml(xml_input):
 def scan_systems(host, port, sap_client, username, password, secure=True):
     sap_connection_array = []
 
-
     response_text = send_request(host, port, sap_client, username, password, secure=False)
     wa_values = parse_xml(response_text)
     print(wa_values)
@@ -145,7 +146,7 @@ def scan_systems(host, port, sap_client, username, password, secure=True):
 
 # Example usage
 if __name__ == "__main__":
-    host = "40.91.255.175"
+    host = "sap.local"
     port = 50000
     sap_client = "000"
     username = "SAP*"
